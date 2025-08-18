@@ -1,53 +1,56 @@
-name: Build and Test
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
 
 jobs:
-  backend:
-    name: Build and Test Backend
+  build-backend:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
-          python-version: "3.11"
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r api/requirements.txt
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api              # ✅ matches your repo structure
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-backend:latest
 
-      - name: Run backend health check
-        run: |
-          python api/app.py &
-          sleep 5
-          curl http://127.0.0.1:8000/health || exit 1
-
-  frontend:
-    name: Build Frontend
+  build-frontend:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
-          node-version: "18"
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm install
-
-      - name: Build frontend
-        working-directory: frontend
-        run: CI=false npm run build
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend          # ✅ matches your repo structure
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-frontend:latest
