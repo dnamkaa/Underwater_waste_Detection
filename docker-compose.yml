@@ -3,16 +3,19 @@ version: "3.9"
 services:
   backend:
     build:
-      context: ./api          # go into api folder
-      dockerfile: Dockerfile  # exact filename with capital D
+      context: ./api
+      dockerfile: Dockerfile
     container_name: backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./api:/app/api        # optional: hot reload during development
     environment:
       - MODEL_PATH=api/model/best.pt
     restart: always
+    profiles: ["prod"]
+
+    # Dev-only: mount local code for hot reload
+    volumes:
+      - ./api:/app/api
 
   frontend:
     build:
@@ -24,3 +27,4 @@ services:
     depends_on:
       - backend
     restart: always
+    profiles: ["prod"]
