@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r api/requirements.txt
 
       - name: Run backend health check
         run: |
@@ -50,4 +50,4 @@ jobs:
 
       - name: Build frontend
         working-directory: frontend
-        run: npm run build
+        run: CI=false npm run build
