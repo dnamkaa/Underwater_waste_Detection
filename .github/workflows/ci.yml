@@ -1,12 +1,14 @@
-name: Build and Test Backend
+name: Build and Test
 
 on:
   push:
     branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  backend:
+    name: Build and Test Backend
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +23,31 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -r api/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run backend health check
         run: |
           python api/app.py &
           sleep 5
-          curl -f http://127.0.0.1:8000/health
+          curl http://127.0.0.1:8000/health || exit 1
+
+  frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
