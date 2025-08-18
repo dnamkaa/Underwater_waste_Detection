@@ -19,15 +19,16 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy requirements.txt and install dependencies
+# Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
+# Copy API code
 COPY . .
 
-# Expose the API port
+# Expose Flask API port
 EXPOSE 8000
 
-# Start the application
+# Run backend app
+
 CMD ["python", "api/app.py"]

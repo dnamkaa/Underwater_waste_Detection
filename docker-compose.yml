@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./api          # go into api folder
+      dockerfile: Dockerfile  # exact filename with capital D
+    container_name: backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app/api        # optional: hot reload during development
+    environment:
+      - MODEL_PATH=api/model/best.pt
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always

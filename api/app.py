@@ -4,6 +4,7 @@ from flask_cors import CORS
 from ultralytics import YOLO
 from PIL import Image
 import pandas as pd
+import time
 
 # --- config ---
 MODEL_PATH = os.getenv("MODEL_PATH", "api/model/best.pt")
@@ -60,9 +61,11 @@ def health():
 def training_metrics():
     return jsonify(load_training_metrics())
 
+
+
+
 @app.post("/predict")
 def predict():
-    # Optional query params: conf, iou, imgsz
     try:
         conf = float(request.args.get("conf", 0.25))
         iou = float(request.args.get("iou", 0.45))
@@ -74,15 +77,15 @@ def predict():
         return jsonify({"error": "missing file"}), 400
 
     file = request.files["file"]
-    try:
-        img = Image.open(io.BytesIO(file.read())).convert("RGB")
-    except Exception:
-        return jsonify({"error": "could not read image"}), 400
+    img = Image.open(io.BytesIO(file.read())).convert("RGB")
 
     m = get_model()
-    results = m.predict(source=img, conf=conf, iou=iou, imgsz=imgsz, verbose=False)
 
-    # Format detections as JSON
+    start = time.time()
+    results = m.predict(source=img, conf=conf, iou=iou, imgsz=imgsz, verbose=False)
+    end = time.time()
+    elapsed_ms = round((end - start) * 1000, 2)
+
     dets = []
     r = results[0]
     if r.boxes is not None:
@@ -95,11 +98,12 @@ def predict():
                 "label": r.names[int(b.cls[0])]
             })
 
-    return jsonify({
+    response_body = {
         "params": {"conf": conf, "iou": iou, "imgsz": imgsz},
-        "detections": dets
-    })
-
+        "detections": dets,
+        "time_ms": elapsed_ms
+    }
+    return jsonify(response_body)
 if __name__ == "__main__":
-    # local dev server (we’ll switch to gunicorn in Docker step)
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    # Run Flask app inside container
+    app.run(host="0.0.0.0", port=8000, debug=False)
