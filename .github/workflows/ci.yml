@@ -1,10 +1,9 @@
-name: CI Pipeline
+name: Build and Test Backend
 
 on:
   push:
-    branches: [ "main" ]   # runs when you push to main
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]   # runs when a PR targets main
 
 jobs:
   build:
@@ -12,21 +11,20 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          cd api
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run backend health check
         run: |
-          python -m flask --app api/app.py --debug run &
+          python api/app.py &
           sleep 5
-          curl http://127.0.0.1:5000/health || exit 1
+          curl -f http://127.0.0.1:8000/health
