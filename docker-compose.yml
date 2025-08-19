@@ -9,13 +9,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MODEL_PATH=api/model/best.pt
+      - MODEL_PATH=model/best.pt   # because inside container it’s /app/model
     restart: always
-    profiles: ["prod"]
-
-    # Dev-only: mount local code for hot reload
     volumes:
-      - ./api:/app/api
+      - ./api:/app   # optional hot reload
 
   frontend:
     build:
@@ -27,4 +24,3 @@ services:
     depends_on:
       - backend
     restart: always
-    profiles: ["prod"]

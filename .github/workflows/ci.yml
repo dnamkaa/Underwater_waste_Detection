@@ -27,9 +27,12 @@ jobs:
       - name: Build and push backend image
         uses: docker/build-push-action@v5
         with:
-          context: ./api              # ✅ matches your repo structure
+          context: ./api                # ✅ make sure this is where app.py lives
+          file: ./api/Dockerfile        # ✅ be explicit, avoids confusion
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-backend:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-backend:latest
+            ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-backend:${{ github.sha }}
 
   build-frontend:
     runs-on: ubuntu-latest
@@ -51,6 +54,9 @@ jobs:
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend          # ✅ matches your repo structure
+          context: ./frontend
+          file: ./frontend/Dockerfile   # ✅ explicitly point to Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-frontend:latest
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/underwater_waste_detection-frontend:${{ github.sha }}
