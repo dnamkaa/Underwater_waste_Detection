@@ -1,29 +1,33 @@
-# -------------------------
+# Render configuration for Underwater Waste Detection
 # Backend Service (Flask+YOLOv8)
-# -------------------------
+# -------------------------------
 services:
   - type: web
     name: underwater-backend
     env: docker
     plan: free
     dockerfilePath: ./api/Dockerfile
-    buildContext: ./api        # 👈 ensures COPY requirements.txt works
+    dockerContext: ./api          # ✅ Changed from buildContext to dockerContext
     autoDeploy: true
     envVars:
       - key: MODEL_PATH
-        value: /app/api/model/best.pt
+        value: model/best.pt      # ✅ Removed /app/api/ prefix
+      - key: RESULTS_CSV
+        value: training/results.csv
+      - key: METRICS_JSON
+        value: training/metrics.json
     healthCheckPath: /health
 
-
-# -------------------------
-# Frontend Service (React+Nginx)
-# -------------------------
+  # -------------------------------
+  # Frontend Service (React+Nginx)
+  # -------------------------------
   - type: web
     name: underwater-frontend
     env: docker
     plan: free
     dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend     # ✅ Add this line
     autoDeploy: true
     envVars:
       - key: REACT_APP_API_URL
-        value: https://underwater-backend.onrender.com   # URL of backend service
+        value: https://underwater-backend.onrender.com
