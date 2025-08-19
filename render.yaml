@@ -7,16 +7,13 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./api/Dockerfile
-    dockerContext: ./api          # ✅ Changed from buildContext to dockerContext
+    buildContext: ./api        # 👈 ensures requirements.txt is in context
     autoDeploy: true
     envVars:
       - key: MODEL_PATH
-        value: model/best.pt      # ✅ Removed /app/api/ prefix
-      - key: RESULTS_CSV
-        value: training/results.csv
-      - key: METRICS_JSON
-        value: training/metrics.json
+        value: /app/api/model/best.pt
     healthCheckPath: /health
+
 
   # -------------------------------
   # Frontend Service (React+Nginx)
