@@ -1,0 +1,39 @@
+# render.yaml
+# Infrastructure as Code for Render
+# Defines backend (Flask API) and frontend (React+Nginx)
+
+services:
+  # ------------------------
+  # Backend Service (Flask)
+  # ------------------------
+  - type: web
+    name: underwater-backend
+    env: docker
+    plan: free              # free tier for now, can upgrade later
+    dockerfilePath: ./api/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: MODEL_PATH
+        value: /app/api/model/best.pt   # adjust if model lives elsewhere
+    healthCheckPath: /health
+    ports:
+      - 8000
+
+  # ------------------------
+  # Frontend Service (React+Nginx)
+  # ------------------------
+  - type: web
+    name: underwater-frontend
+    env: docker
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://underwater-backend.onrender.com  # URL of backend service
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    ports:
+      - 80
