@@ -7,11 +7,13 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./api/Dockerfile
+    buildContext: ./api        # 👈 ensures COPY requirements.txt works
     autoDeploy: true
     envVars:
       - key: MODEL_PATH
-        value: /app/api/model/best.pt   # adjust if model lives elsewhere
+        value: /app/api/model/best.pt
     healthCheckPath: /health
+
 
 # -------------------------
 # Frontend Service (React+Nginx)
