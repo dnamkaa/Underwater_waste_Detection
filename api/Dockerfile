@@ -26,6 +26,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy API code
 COPY . .
 
+# Override paths for Docker environment (no api/ prefix needed inside container)
+ENV MODEL_PATH="model/best.pt"
+ENV RESULTS_CSV="training/results.csv"
+ENV METRICS_JSON="training/metrics.json"
+
 # Expose Flask API port
 EXPOSE 8000
 
