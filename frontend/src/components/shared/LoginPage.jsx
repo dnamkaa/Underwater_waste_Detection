@@ -55,7 +55,7 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-4">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center text-blue-600">
-          {isRegistering ? 'Create Account' : 'Welcome To KKzone Auto Engineering'}
+          {isRegistering ? 'Create Account' : 'Underwater Waste Detection'}
         </h2>
         <form className="space-y-6 mt-6">
           <div>
