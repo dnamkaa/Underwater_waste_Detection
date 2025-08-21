@@ -16,7 +16,6 @@ RUN apt-get update && apt-get install -y \
     libxt6 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
 # Install dependencies
@@ -26,13 +25,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy API code
 COPY . .
 
-# Override paths for Docker environment (no api/ prefix needed inside container)
-ENV MODEL_PATH="model/best.pt"
-ENV RESULTS_CSV="training/results.csv"
-ENV METRICS_JSON="training/metrics.json"
+# Copy model explicitly
+COPY model/ /app/model/
 
-# Expose Flask API port
+# Environment variables
+ENV MODEL_PATH="/app/model/best.pt"
+ENV RESULTS_CSV="/app/training/results.csv"
+ENV METRICS_JSON="/app/training/metrics.json"
+
 EXPOSE 8000
 
-# Run backend app
 CMD ["python", "app.py"]
