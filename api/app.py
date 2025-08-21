@@ -105,5 +105,5 @@ def predict():
     }
     return jsonify(response_body)
 if __name__ == "__main__":
-    # Run Flask app inside container
-    app.run(host="0.0.0.0", port=8000, debug=False)
+    port = int(os.environ.get("PORT", 8000))  # Render injects PORT env
+    app.run(host="0.0.0.0", port=port, debug=False)   # Run Flask app inside container
