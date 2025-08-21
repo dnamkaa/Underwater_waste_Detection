@@ -1,4 +1,6 @@
 # Render configuration for Underwater Waste Detection
+
+# -------------------------------
 # Backend Service (Flask+YOLOv8)
 # -------------------------------
 services:
@@ -7,11 +9,11 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./api/Dockerfile
-    buildContext: ./api        # 👈 ensures requirements.txt is in context
+    buildContext: ./api
     autoDeploy: true
     envVars:
       - key: MODEL_PATH
-        value: /app/api/model/best.pt
+        value: /app/model/best.pt   # ✅ matches Dockerfile COPY
     healthCheckPath: /health
 
   # -------------------------------
@@ -22,7 +24,7 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./frontend/Dockerfile
-    buildContext: ./frontend     
+    buildContext: ./frontend
     autoDeploy: true
     envVars:
       - key: REACT_APP_API_URL
