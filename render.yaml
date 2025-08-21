@@ -14,7 +14,6 @@ services:
         value: /app/api/model/best.pt
     healthCheckPath: /health
 
-
   # -------------------------------
   # Frontend Service (React+Nginx)
   # -------------------------------
@@ -23,7 +22,7 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./frontend/Dockerfile
-    dockerContext: ./frontend     # ✅ Add this line
+    buildContext: ./frontend     
     autoDeploy: true
     envVars:
       - key: REACT_APP_API_URL
